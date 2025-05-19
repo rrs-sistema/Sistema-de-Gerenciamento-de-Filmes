@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Home - Lista de Filmes</title>
+        <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fe;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #000000;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        nav {
+            background-color: #2F3C27;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: flex-start;
+            padding: 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        nav li {
+            margin-right: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #707EAE;
+            border-radius: 5px;
+        }
+
+        .usuario-logado {
+            color: white;
+            font-size: 18px;
+            padding-right: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        th {
+            background-color: #000000;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        td a {
+            color: #000000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #1d1c1c;
+        }
+
+        .assistido {
+            background-color: #e0ffe0;
+        }
+
+        footer {
+            background-color: #2F3C27;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        /* NOVOS ESTILOS */
+
+        /* Alinhar botão à direita */
+        .button-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        /* Ajustar colunas Data, Status e Ações */
+        th:nth-child(3), th:nth-child(4), th:nth-child(5),
+        td:nth-child(3), td:nth-child(4), td:nth-child(5) {
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        /* Centralizar Data e Status */
+        td:nth-child(3), td:nth-child(4),
+        th:nth-child(3), th:nth-child(4) {
+            text-align: center;
+        }
+    </style>
+    </head>
+    <body>
+
+        <header>
+            <h1>Sistema de Gerenciamento de Filmes</h1>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="/lista-filme">Lista de Filmes</a></li>
+                <li><a href="/lista-usuario">Lista de Usuários</a></li>
+                <li><a href="/logout">Sair</a></li>
+            </ul>
+            Usuário Logado:
+            <span class="usuario-logado">Usuário: <span class="usuario-logado"
+                    th:text="${nome}"></span></span>
+        </nav>
+
+        <div class="container">
+            <!-- Tabela de Filmes Locados -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título do Filme</th>
+                        <th>Usuário</th>
+                        <th>Data da Inclusão</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="mov : ${movimentacoes}"
+                        th:class="${mov.assistido} ? 'assistido' : ''">
+                        <td th:text="${mov.nomeFilme}">Nome do Filme</td>
+                        <td th:text="${mov.nomeUsuario}">Nome do Usuário</td>
+                        <td th:text="${mov.dataCadastro}">--/--/----</td>
+                        <td><span
+                                th:text="${mov.assistido ? 'Assistido' : 'Não Assistido'}"></span></td>
+                        <td>
+                            <a
+                                th:href="@{/alterar-status-filme/{id}(id=${mov.id})}">Alterar
+                                Status</a> |
+                            <a th:href="@{/remover-filme/{id}(id=${mov.id})}"
+                                style="color: red;">Remover</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Botão alinhado à direita -->
+            <div class="button-container">
+                <a href="/cadastro-filme-usuario">
+                    <button class="btn">Adicionar Novo Filme</button>
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 Gerenciamento de Filmes | Todos os direitos reservados</p>
+            <p>Alunos: Jullia Acsa & Rivaldo Roberto</p>
+        </footer>
+
+    </body>
+</html>

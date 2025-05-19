@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lista de Usuários</title>
+        <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fe;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 1200px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        th {
+            background-color: #000000;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        td a {
+            color: #000000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #1d1c1c;
+        }
+
+        .voltar {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .voltar a {
+            color: red;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .voltar a:hover {
+            text-decoration: underline;
+        }
+
+        .alunos {
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            text-align: right;
+            margin-top: 30px;
+        }
+
+        .alunos p {
+            margin: 0;
+            font-size: 12px;
+            color: #333;
+        }
+    </style>
+    </head>
+    <body>
+
+        <div class="container">
+            <h2>Lista de Usuários</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th style="text-align: center;">E-mail</th>
+                        <th style="text-align: center;">Telefone</th>
+                        <th style="text-align: center;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td th:text="${usuario.nome}">Nome do Usuário</td>
+                        <td style="text-align: center;"
+                            th:text="${usuario.email}">email@exemplo.com</td>
+                        <td style="text-align: center;"
+                            th:text="${usuario.telefone}">(00) 0000-0000</td>
+                        <td style="text-align: center;">
+                            <a
+                                th:href="@{/alterar-usuario/{id}(id=${usuario.id})}">Alterar</a>
+                            |
+                            <a
+                                th:href="@{/remover-usuario/{id}(id=${usuario.id})}"
+                                style="color: red;">Remover</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <a href="/cadastro-usuario">
+                <button class="btn">Cadastrar Novo Usuário</button>
+            </a>
+
+            <div class="voltar">
+                <a href="/home">Voltar para Home</a>
+            </div>
+
+            <div class="alunos">
+                <p>Alunos: Jullia Acsa & Rivaldo Roberto</p>
+            </div>
+        </div>
+
+    </body>
+</html>

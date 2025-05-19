@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gerenciar Movimentação de Filme</title>
+        <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fe;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #000000;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: #000000;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #1d1c1c
+        }
+
+        .link, .voltar {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .link a, .voltar a {
+            text-decoration: none;
+            color: #000000;
+            font-weight: bold;
+        }
+
+        .voltar a {
+            color: red;
+        }
+
+        .link a:hover, .voltar a:hover {
+            text-decoration: underline;
+        }
+
+        .alunos {
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            text-align: right;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .alunos p {
+            margin: 0;
+        }
+    </style>
+    </head>
+    <body>
+
+        <div class="container">
+            <h2>Gerenciar Movimentação de Filme</h2>
+            <form action="/cadastro-filme-usuario" method="POST">
+
+                <div class="input-group">
+                    <label for="filmeId">Filme</label>
+                    <select id="filmeId" name="filmeId" required>
+                        <option value disabled selected>Selecione um
+                            Filme</option>
+                        <th:block th:each="filme : ${filmes}">
+                            <option th:value="${filme.id}"
+                                th:text="${filme.titulo}"></option>
+                        </th:block>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="usuarioId">Usuário</label>
+                    <select id="usuarioId" name="usuarioId" required>
+                        <option value disabled selected>Selecione um
+                            Usuário</option>
+                        <th:block th:each="usuario : ${usuarios}">
+                            <option th:value="${usuario.id}"
+                                th:text="${usuario.nome}"></option>
+                        </th:block>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn">Incluir</button>
+            </form>
+
+            <div class="voltar">
+                <a href="/home">Voltar</a>
+            </div>
+
+            <div class="alunos">
+                <p>Alunos: Jullia Acsa & Rivaldo Roberto</p>
+            </div>
+        </div>
+
+    </body>
+</html>
