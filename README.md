@@ -1,14 +1,10 @@
-# Jogo da velha
+# Sistema de Gerenciamento de Filmes
 
-Esta é uma aplicação simples de jogo da velha desenvolvida utilizando HTML, CSS e JavaScript.
+Esta é uma Aplicação SimplesPara Sistema de Gerenciamento de Filmes
 
 <img src="/src/assets/screen.png">
 
 ## Funcionalidades
-
-- Iniciar jogo
-- Jogar com uma pessoa
-- Jogar com a máquina/computador
 
 ## Como Usar
 
