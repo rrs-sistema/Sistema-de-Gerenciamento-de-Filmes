@@ -2,7 +2,7 @@
 
 Esta é uma Aplicação SimplesPara Sistema de Gerenciamento de Filmes
 
-<img src="/src/assets/screen.png">
+<img src="/assets/screen.png">
 
 ## Funcionalidades
 
