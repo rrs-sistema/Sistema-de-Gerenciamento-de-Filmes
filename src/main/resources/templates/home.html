@@ -166,9 +166,9 @@
 
         <nav>
             <ul>
-                <li><a href="/lista-filme">Lista de Filmes</a></li>
-                <li><a href="/lista-usuario">Lista de Usuários</a></li>
-                <li><a href="/logout">Sair</a></li>
+                <li><a href="/filmes/lista">Lista de Filmes</a></li>
+                <li><a href="/usuarios/lista">Lista de Usuários</a></li>
+                <li><a href="/usuarios/logout">Sair</a></li>
             </ul>
             Usuário Logado:
             <span class="usuario-logado">Usuário: <span class="usuario-logado"
@@ -190,16 +190,17 @@
                 <tbody>
                     <tr th:each="mov : ${movimentacoes}"
                         th:class="${mov.assistido} ? 'assistido' : ''">
-                        <td th:text="${mov.nomeFilme}">Nome do Filme</td>
-                        <td th:text="${mov.nomeUsuario}">Nome do Usuário</td>
+                        <td th:text="${mov.filme.titulo}"> Filme</td>
+                        <td th:text="${mov.usuario.nome}">Usuário</td>
                         <td th:text="${mov.dataCadastro}">--/--/----</td>
                         <td><span
                                 th:text="${mov.assistido ? 'Assistido' : 'Não Assistido'}"></span></td>
                         <td>
                             <a
-                                th:href="@{/alterar-status-filme/{id}(id=${mov.id})}">Alterar
+                                th:href="@{/movimentacoes/alterar-status/{id}(id=${mov.id})}">Alterar
                                 Status</a> |
-                            <a th:href="@{/remover-filme/{id}(id=${mov.id})}"
+                            <a
+                                th:href="@{/movimentacoes/remover/{id}(id=${mov.id})}"
                                 style="color: red;">Remover</a>
                         </td>
                     </tr>
@@ -208,8 +209,8 @@
 
             <!-- Botão alinhado à direita -->
             <div class="button-container">
-                <a href="/cadastro-filme-usuario">
-                    <button class="btn">Adicionar Novo Filme</button>
+                <a href="/movimentacoes/cadastro">
+                    <button class="btn">Adicionar Novo</button>
                 </a>
             </div>
         </div>

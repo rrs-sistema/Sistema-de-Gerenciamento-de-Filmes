@@ -1,68 +1,81 @@
 package com.unicesumar.controle.filme.controle_filmes.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.unicesumar.controle.filme.controle_filmes.model.UsuarioModel;
+import com.unicesumar.controle.filme.controle_filmes.model.FilmeModel;
 import com.unicesumar.controle.filme.controle_filmes.service.FilmeService;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+@RequestMapping("/filmes")
 public class FilmeController {
 
     @Autowired
-    FilmeService filmeService;
+    private FilmeService filmeService;
 
-    // Exibe a página de cadastro
-    @SuppressWarnings("unchecked")
-    @GetMapping("/cadastro-filme")
-    public String cadastro(HttpSession session, Model model) {
-        UsuarioModel usuario = (UsuarioModel) session.getAttribute("usuario");
-        if (usuario == null) {
-            return "redirect:/login"; // Redireciona para a página de login se o usuário não estiver autenticado
+    // Exibe a página de cadastro de filme
+    @GetMapping("/cadastro")
+    public String exibirFormularioCadastro(HttpSession session, Model model) {
+        if (!usuarioAutenticado(session)) {
+            return "redirect:/login";
         }
 
-        List<UsuarioModel> usuarios = (List<UsuarioModel>) session.getAttribute("usuarios");
-        // Adiciona a lista de usuários no modelo para que ela seja acessada no
-        model.addAttribute("usuarios", usuarios);
-
-        return "cadastro-filme"; // Retorna a página de cadastro (sem a extensão .html)
+        model.addAttribute("filme", new FilmeModel());
+        return "cadastro-filme"; // View: templates/cadastro-filme.html
     }
 
-    // Processa o cadastro de um novo usuário
-    @PostMapping("/cadastro-filme")
-    public String cadastrar(@RequestParam String titulo, @RequestParam String genero, @RequestParam int anoLancamento,
+    // Processa o cadastro de um novo filme
+    @PostMapping("/cadastro")
+    public String cadastrarFilme(@ModelAttribute FilmeModel filme,
             HttpSession session, Model model) {
-        // String titulo, String genero, int anoLancamento,
-        Boolean cadastrou = filmeService.save(titulo, genero, anoLancamento, model, session);
-        if (!cadastrou) {
+        if (!usuarioAutenticado(session)) {
+            return "redirect:/login";
+        }
+
+        try {
+            filmeService.save(filme);
+            return "redirect:/filmes/lista";
+        } catch (RuntimeException e) {
+            model.addAttribute("msg", e.getMessage());
+            model.addAttribute("filme", filme);
             return "cadastro-filme";
         }
-        return "redirect:/lista-filme"; // Redireciona para a página de lista de filmes
     }
 
-    @GetMapping("/lista-filme")
-    public String pesquisar(HttpSession session, Model model) {
-        Object usuario = session.getAttribute("usuario");
-        if (usuario == null) {
-            return "redirect:/login"; // Redireciona para a página de login se o usuário não estiver autenticado
+    // Lista todos os filmes
+    @GetMapping("/lista")
+    public String listarFilmes(HttpSession session, Model model) {
+        if (!usuarioAutenticado(session)) {
+            return "redirect:/login";
         }
-        filmeService.findAll(model, session);
-        return "lista-filme";
+
+        model.addAttribute("filmes", filmeService.findAll());
+        return "lista-filme"; // View: templates/lista-filme.html
     }
 
+    // (Opcional) Alternar status de algo relacionado ao filme
     @GetMapping("/alterar-status/{id}")
     public String alterarStatus(@PathVariable Long id, HttpSession session) {
-        filmeService.updateStatus(id, session); // Salva a filme com o status alterado
-        return "redirect:/lista-filme"; // Redireciona de volta para a lista de filmes
+        if (!usuarioAutenticado(session)) {
+            return "redirect:/login";
+        }
+
+        // Se você futuramente adicionar um campo "ativo"/"assistido" no FilmeModel
+        // então implemente o método updateStatus no service
+        // filmeService.updateStatus(id);
+        return "redirect:/filmes/lista";
     }
 
+    // Utilitário: verifica se o usuário está logado
+    private boolean usuarioAutenticado(HttpSession session) {
+        return session.getAttribute("usuario") != null;
+    }
 }

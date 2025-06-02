@@ -1,10 +1,14 @@
 package com.unicesumar.controle.filme.controle_filmes.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.unicesumar.controle.filme.controle_filmes.model.UsuarioModel;
@@ -13,63 +17,70 @@ import com.unicesumar.controle.filme.controle_filmes.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+@RequestMapping("/usuarios")
 public class UsuarioController {
 
     @Autowired
-    UsuarioService usuarioService;
+    private UsuarioService usuarioService;
 
-    // Exibe a página de login
+    // Página de login
     @GetMapping("/login")
-    public String login() {
-        return "login"; // Retorna a página de login (sem a extensão .html)
+    public String exibirLogin(Model model) {
+        model.addAttribute("usuario", new UsuarioModel());
+        return "login";
     }
 
-    // Trata a requisição POST do formulário de login
-    @PostMapping("/validar-credenciais")
-    public String validarCredenciais(@RequestParam String email, @RequestParam String senha,
-            Model model, HttpSession session) {
-        // Verifica as credenciais do usuário
-        Boolean logou = usuarioService.findByEmailAndSenha(email, senha, model, session);
-        if (logou) {
-            return "redirect:/lista-filme"; // Redireciona para a página inicial após login
+    // Valida as credenciais do usuário
+    @PostMapping("/login")
+    public String validarLogin(@RequestParam String email,
+            @RequestParam String senha,
+            HttpSession session,
+            Model model) {
+        Optional<UsuarioModel> usuarioOpt = usuarioService.login(email, senha);
+
+        if (usuarioOpt.isPresent()) {
+            session.setAttribute("usuario", usuarioOpt.get());
+            return "redirect:/home";
         } else {
-            return "login"; // Retorna para a página de login com mensagem de erro
+            model.addAttribute("msg", "Credenciais inválidas. Tente novamente.");
+            return "login";
         }
     }
 
-    // Exibe a página de cadastro
-    @GetMapping("/cadastro-usuario")
-    public String cadastro() {
-        return "cadastro-usuario"; // Retorna a página de cadastro (sem a extensão .html)
+    // Página de cadastro
+    @GetMapping("/cadastro")
+    public String exibirFormularioCadastro(Model model) {
+        model.addAttribute("usuario", new UsuarioModel());
+        return "cadastro-usuario";
     }
 
-    // Processa o cadastro de um novo usuário
-    @PostMapping("/cadastro-usuario")
-    public String cadastrar(@RequestParam String nome, @RequestParam String email, @RequestParam String senha,
-            @RequestParam String confirmaSenha, Model model, HttpSession session) {
-
-        UsuarioModel usuario = new UsuarioModel();
-        if (!usuario.validaSenha(senha, confirmaSenha)) {
-            model.addAttribute("msg", "As senhas não conferem!");
-            return "cadastro-usuario"; // Retorna para a página de login com mensagem de erro
-        }
-        // Cria um novo usuário com os dados fornecidos
-        Boolean cadastrou = usuarioService.save(nome, email, senha, model, session);
-
-        if (!cadastrou) {
+    // Processa o cadastro de novo usuário
+    @PostMapping("/cadastro")
+    public String cadastrarUsuario(@ModelAttribute UsuarioModel usuario,
+            @RequestParam String confirmaSenha,
+            Model model) {
+        if (!usuario.validaSenha(usuario.getSenha(), confirmaSenha)) {
+            model.addAttribute("msg", "As senhas não conferem.");
             return "cadastro-usuario";
         }
-        // Redireciona para a página home após o cadastro
-        return "redirect:/lista-usuario";
+
+        try {
+            usuarioService.save(usuario);
+            return "redirect:/usuarios/login";
+        } catch (RuntimeException e) {
+            model.addAttribute("msg", e.getMessage());
+            return "cadastro-usuario";
+        }
     }
 
-    @GetMapping("/lista-usuario")
-    public String pesquisar(HttpSession session, Model model) {
-        Object usuario = session.getAttribute("usuario");
-        if (usuario == null) {
-            return "redirect:/login"; // Redireciona para a página de login se o usuário não estiver autenticado
+    // Lista de usuários cadastrados
+    @GetMapping("/lista")
+    public String listarUsuarios(HttpSession session, Model model) {
+        if (session.getAttribute("usuario") == null) {
+            return "redirect:/usuarios/login";
         }
-        usuarioService.findAll(model, session);
+
+        model.addAttribute("usuarios", usuarioService.findAll());
         return "lista-usuario";
     }
 }
