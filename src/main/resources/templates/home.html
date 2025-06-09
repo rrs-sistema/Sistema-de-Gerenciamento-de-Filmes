@@ -168,7 +168,7 @@
             <ul>
                 <li><a href="/filmes/lista">Lista de Filmes</a></li>
                 <li><a href="/usuarios/lista">Lista de Usuários</a></li>
-                <li><a href="/usuarios/logout">Sair</a></li>
+                <li><a href="/logout">Sair</a></li>
             </ul>
             Usuário Logado:
             <span class="usuario-logado">Usuário: <span class="usuario-logado"
@@ -192,7 +192,12 @@
                         th:class="${mov.assistido} ? 'assistido' : ''">
                         <td th:text="${mov.filme.titulo}"> Filme</td>
                         <td th:text="${mov.usuario.nome}">Usuário</td>
-                        <td th:text="${mov.dataCadastro}">--/--/----</td>
+                        <td
+                            th:text="${#strings.substring(tarefa.dataCadastro, 8,10) + '/' + 
+                                      #strings.substring(tarefa.dataCadastro,5,7) + '/' + 
+                                      #strings.substring(tarefa.dataCadastro,0,4) + ' ' + 
+                                      #strings.substring(tarefa.dataCadastro,11,16)}"
+                            style="width: 180px; text-align: center;">--/--/----</td>
                         <td><span
                                 th:text="${mov.assistido ? 'Assistido' : 'Não Assistido'}"></span></td>
                         <td>

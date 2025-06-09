@@ -1,6 +1,10 @@
 package com.unicesumar.controle.filme.controle_filmes.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,17 +35,21 @@ public class MovimentacaoFilmeController {
 
     // Exibe o formulário para adicionar filme ao usuário
     @GetMapping("/cadastro")
-    public String exibirFormularioCadastro(HttpSession session, Model model) {
-        UsuarioModel usuario = getUsuarioLogado(session);
-        if (usuario == null)
+    public String exibirFormularioCadastro(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        String email = userDetails.getUsername();
+
+        // Buscar o UsuarioModel no banco
+        Optional<UsuarioModel> usuario = usuarioService.findByEmail(email);
+        if (usuario.isEmpty()) {
             return "redirect:/usuarios/login";
+        }
 
         model.addAttribute("filmeId", null);
-        model.addAttribute("usuarioId", usuario.getId()); // vincula com o usuário logado
+        model.addAttribute("usuarioId", usuario.get().getId());
         model.addAttribute("filmes", filmeService.findAll());
-        model.addAttribute("usuarios", usuarioService.findAll()); // <- este é o ponto
+        model.addAttribute("usuarios", usuarioService.findAll());
 
-        return "cadastro-filme-usuario"; // templates/cadastro-filme-usuario.html
+        return "cadastro-filme-usuario";
     }
 
     // Processa o cadastro de um filme para assistir

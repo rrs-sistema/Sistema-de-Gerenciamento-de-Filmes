@@ -32,13 +32,16 @@ public class UsuarioService {
         if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
             throw new RuntimeException("Email já cadastrado.");
         }
-
         usuarioRepository.save(usuario);
         return true;
     }
 
     public Optional<UsuarioModel> login(String email, String senha) {
         return usuarioRepository.findByEmailAndSenha(email, senha);
+    }
+
+    public Optional<UsuarioModel> findByEmail(String email) {
+        return usuarioRepository.findByEmail(email);
     }
 
     public List<UsuarioModel> findAll() {

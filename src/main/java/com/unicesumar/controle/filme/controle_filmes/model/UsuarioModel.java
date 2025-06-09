@@ -28,6 +28,7 @@ public class UsuarioModel {
     private String email;
     private String senha;
     private String telefone;
+    private String role; // valores possíveis: "USER", "ADMIN"
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MovimentacaoFilmeModel> movimentacoes = new ArrayList<>();
