@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.unicesumar.controle.filme.controle_filmes.model.FilmeModel;
 import com.unicesumar.controle.filme.controle_filmes.service.FilmeService;
 
-import jakarta.servlet.http.HttpSession;
-
 @Controller
 @RequestMapping("/filmes")
 public class FilmeController {
@@ -23,23 +21,14 @@ public class FilmeController {
 
     // Exibe a página de cadastro de filme
     @GetMapping("/cadastro")
-    public String exibirFormularioCadastro(HttpSession session, Model model) {
-        if (!usuarioAutenticado(session)) {
-            return "redirect:/login";
-        }
-
+    public String exibirFormularioCadastro(Model model) {
         model.addAttribute("filme", new FilmeModel());
         return "cadastro-filme"; // View: templates/cadastro-filme.html
     }
 
     // Processa o cadastro de um novo filme
     @PostMapping("/cadastro")
-    public String cadastrarFilme(@ModelAttribute FilmeModel filme,
-            HttpSession session, Model model) {
-        if (!usuarioAutenticado(session)) {
-            return "redirect:/login";
-        }
-
+    public String cadastrarFilme(@ModelAttribute FilmeModel filme, Model model) {
         try {
             filmeService.save(filme);
             return "redirect:/filmes/lista";
@@ -52,30 +41,17 @@ public class FilmeController {
 
     // Lista todos os filmes
     @GetMapping("/lista")
-    public String listarFilmes(HttpSession session, Model model) {
-        if (!usuarioAutenticado(session)) {
-            return "redirect:/login";
-        }
-
+    public String listarFilmes(Model model) {
         model.addAttribute("filmes", filmeService.findAll());
         return "lista-filme"; // View: templates/lista-filme.html
     }
 
     // (Opcional) Alternar status de algo relacionado ao filme
     @GetMapping("/alterar-status/{id}")
-    public String alterarStatus(@PathVariable Long id, HttpSession session) {
-        if (!usuarioAutenticado(session)) {
-            return "redirect:/login";
-        }
-
+    public String alterarStatus(@PathVariable Long id) {
         // Se você futuramente adicionar um campo "ativo"/"assistido" no FilmeModel
         // então implemente o método updateStatus no service
         // filmeService.updateStatus(id);
         return "redirect:/filmes/lista";
-    }
-
-    // Utilitário: verifica se o usuário está logado
-    private boolean usuarioAutenticado(HttpSession session) {
-        return session.getAttribute("usuario") != null;
     }
 }

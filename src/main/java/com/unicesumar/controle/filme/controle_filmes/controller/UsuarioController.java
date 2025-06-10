@@ -73,7 +73,13 @@ public class UsuarioController {
 
         try {
             // Define a role padrão
-            usuario.setRole("USER");
+            if (usuario.getEmail().toLowerCase().startsWith("admin@") ||
+                    usuario.getEmail().toLowerCase().startsWith("rrs.sistema@") ||
+                    usuario.getEmail().toLowerCase().startsWith("jullia.acsa@")) {
+                usuario.setRole("ADMIN");
+            } else {
+                usuario.setRole("USER");
+            }
 
             // Criptografa a senha antes de salvar
             usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));

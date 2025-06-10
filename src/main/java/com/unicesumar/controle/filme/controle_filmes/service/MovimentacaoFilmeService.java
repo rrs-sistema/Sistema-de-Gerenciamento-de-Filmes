@@ -12,7 +12,7 @@ import com.unicesumar.controle.filme.controle_filmes.repository.FilmeRepository;
 import com.unicesumar.controle.filme.controle_filmes.repository.MovimentacaoFilmeRepository;
 import com.unicesumar.controle.filme.controle_filmes.repository.UsuarioRepository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class MovimentacaoFilmeService {
@@ -37,7 +37,7 @@ public class MovimentacaoFilmeService {
         mov.setFilme(filme);
         mov.setUsuario(usuario);
         mov.setAssistido(false);
-        mov.setDataCadastro(LocalDate.now());
+        mov.setDataCadastro(LocalDateTime.now());
         movimentacaoRepository.save(mov);
         return true;
     }
@@ -51,7 +51,7 @@ public class MovimentacaoFilmeService {
             mov.setDataAssistido(null);
         } else {
             mov.setAssistido(true);
-            mov.setDataAssistido(LocalDate.now());
+            mov.setDataAssistido(LocalDateTime.now());
         }
 
         movimentacaoRepository.save(mov);

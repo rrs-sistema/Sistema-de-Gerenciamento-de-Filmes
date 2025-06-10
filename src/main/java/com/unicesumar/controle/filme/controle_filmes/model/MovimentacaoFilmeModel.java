@@ -1,6 +1,6 @@
 package com.unicesumar.controle.filme.controle_filmes.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,12 +33,12 @@ public class MovimentacaoFilmeModel {
     private UsuarioModel usuario;
 
     private boolean assistido;
-    private LocalDate dataCadastro; // data que entrou na lista "para assistir"
-    private LocalDate dataAssistido; // preenchido apenas se for assistido
+    private LocalDateTime dataCadastro; // data que entrou na lista "para assistir"
+    private LocalDateTime dataAssistido; // preenchido apenas se for assistido
 
     public void marcarComoAssistido() {
         this.assistido = true;
-        this.dataAssistido = LocalDate.now();
+        this.dataAssistido = LocalDateTime.now();
     }
 
     public void marcarComoNaoAssistido() {

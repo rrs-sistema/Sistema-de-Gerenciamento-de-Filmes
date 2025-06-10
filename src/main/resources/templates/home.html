@@ -182,7 +182,7 @@
                     <tr>
                         <th>Título do Filme</th>
                         <th>Usuário</th>
-                        <th>Data da Inclusão</th>
+                        <th>Data de assistido</th>
                         <th>Status</th>
                         <th>Ações</th>
                     </tr>
@@ -193,11 +193,9 @@
                         <td th:text="${mov.filme.titulo}"> Filme</td>
                         <td th:text="${mov.usuario.nome}">Usuário</td>
                         <td
-                            th:text="${#strings.substring(tarefa.dataCadastro, 8,10) + '/' + 
-                                      #strings.substring(tarefa.dataCadastro,5,7) + '/' + 
-                                      #strings.substring(tarefa.dataCadastro,0,4) + ' ' + 
-                                      #strings.substring(tarefa.dataCadastro,11,16)}"
-                            style="width: 180px; text-align: center;">--/--/----</td>
+                            th:text="${mov.dataAssistido != null ? #temporals.format(mov.dataAssistido, 'dd/MM/yyyy HH:mm') : '--/--/----'}"
+                            style="width: 180px; text-align: center;"></td>
+
                         <td><span
                                 th:text="${mov.assistido ? 'Assistido' : 'Não Assistido'}"></span></td>
                         <td>

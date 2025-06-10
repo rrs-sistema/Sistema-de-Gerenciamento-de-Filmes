@@ -1,7 +1,5 @@
 package com.unicesumar.controle.filme.controle_filmes.controller;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,8 +15,6 @@ import com.unicesumar.controle.filme.controle_filmes.model.UsuarioModel;
 import com.unicesumar.controle.filme.controle_filmes.service.FilmeService;
 import com.unicesumar.controle.filme.controle_filmes.service.MovimentacaoFilmeService;
 import com.unicesumar.controle.filme.controle_filmes.service.UsuarioService;
-
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/movimentacoes")
@@ -36,16 +32,10 @@ public class MovimentacaoFilmeController {
     // Exibe o formulário para adicionar filme ao usuário
     @GetMapping("/cadastro")
     public String exibirFormularioCadastro(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        String email = userDetails.getUsername();
-
-        // Buscar o UsuarioModel no banco
-        Optional<UsuarioModel> usuario = usuarioService.findByEmail(email);
-        if (usuario.isEmpty()) {
-            return "redirect:/usuarios/login";
-        }
+        UsuarioModel usuario = getUsuarioLogado(userDetails);
 
         model.addAttribute("filmeId", null);
-        model.addAttribute("usuarioId", usuario.get().getId());
+        model.addAttribute("usuarioId", usuario.getId());
         model.addAttribute("filmes", filmeService.findAll());
         model.addAttribute("usuarios", usuarioService.findAll());
 
@@ -55,11 +45,9 @@ public class MovimentacaoFilmeController {
     // Processa o cadastro de um filme para assistir
     @PostMapping("/cadastro")
     public String cadastrarFilmeParaUsuario(@RequestParam Long filmeId, @RequestParam Long usuarioId,
-            HttpSession session,
+            @AuthenticationPrincipal UserDetails userDetails,
             Model model) {
-        UsuarioModel usuario = getUsuarioLogado(session);
-        if (usuario == null)
-            return "redirect:/usuarios/login";
+        UsuarioModel usuario = getUsuarioLogado(userDetails);
 
         try {
             movimentacaoService.salvar(filmeId, usuarioId);
@@ -74,10 +62,8 @@ public class MovimentacaoFilmeController {
 
     // Lista todos os filmes movimentados pelo usuário
     @GetMapping("/lista")
-    public String listarFilmesDoUsuario(HttpSession session, Model model) {
-        UsuarioModel usuario = getUsuarioLogado(session);
-        if (usuario == null)
-            return "redirect:/usuarios/login";
+    public String listarFilmesDoUsuario(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        UsuarioModel usuario = getUsuarioLogado(userDetails);
 
         model.addAttribute("movimentacoes", movimentacaoService.listarPorUsuario(usuario.getId()));
         return "home"; // templates/home.html
@@ -85,9 +71,8 @@ public class MovimentacaoFilmeController {
 
     // Alterna status assistido/não assistido
     @GetMapping("/alterar-status/{id}")
-    public String alterarStatus(@PathVariable Long id, HttpSession session) {
-        if (getUsuarioLogado(session) == null)
-            return "redirect:/usuarios/login";
+    public String alterarStatus(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        getUsuarioLogado(userDetails);
 
         movimentacaoService.alterarStatus(id);
         return "redirect:/movimentacoes/lista";
@@ -95,9 +80,8 @@ public class MovimentacaoFilmeController {
 
     // Remove um filme da lista do usuário
     @GetMapping("/remover/{id}")
-    public String removerFilme(@PathVariable Long id, HttpSession session, Model model) {
-        if (getUsuarioLogado(session) == null)
-            return "redirect:/usuarios/login";
+    public String removerFilme(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails, Model model) {
+        getUsuarioLogado(userDetails);
 
         try {
             movimentacaoService.remover(id);
@@ -108,8 +92,10 @@ public class MovimentacaoFilmeController {
         return "redirect:/movimentacoes/lista";
     }
 
-    // 🔒 Utilitário para obter usuário logado
-    private UsuarioModel getUsuarioLogado(HttpSession session) {
-        return (UsuarioModel) session.getAttribute("usuario");
+    // 🔒 Utilitário para obter usuário logado com segurança
+    private UsuarioModel getUsuarioLogado(UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        return usuarioService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado: " + email));
     }
 }
